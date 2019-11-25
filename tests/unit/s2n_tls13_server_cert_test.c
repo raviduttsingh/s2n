@@ -113,10 +113,10 @@ int main(int argc, char **argv)
 
         struct s2n_connection *conn;
         EXPECT_NOT_NULL(conn = s2n_connection_new(S2N_SERVER));
+        conn->actual_protocol_version = S2N_TLS13;
 
         struct s2n_cert cert = {.raw = tls13_cert_chain, .next= NULL};
         struct s2n_cert_chain cert_chain = {.head = &cert};
-        conn->actual_protocol_version = S2N_TLS13;
         struct s2n_cert_chain_and_key cert_chain_and_key = {.cert_chain = &cert_chain};
         conn->handshake_params.our_chain_and_key = &cert_chain_and_key;
 
