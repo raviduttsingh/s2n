@@ -55,8 +55,8 @@ static int inline is_cert_supported(struct s2n_connection *conn, s2n_cert_type a
 int s2n_server_cert_recv(struct s2n_connection *conn)
 {
     if (conn->actual_protocol_version == S2N_TLS13) {
-        uint8_t certificate_request_context;
-        GUARD(s2n_stuffer_read_uint8(&conn->handshake.io, &certificate_request_context));
+        uint8_t certificate_request_context_len;
+        GUARD(s2n_stuffer_read_uint8(&conn->handshake.io, &certificate_request_context_len));
     }
 
     uint32_t size_of_all_certificates;
@@ -87,9 +87,10 @@ int s2n_server_cert_recv(struct s2n_connection *conn)
 int s2n_server_cert_send(struct s2n_connection *conn)
 {
     if (conn->actual_protocol_version == S2N_TLS13) {
-        /* server's certificate request context should always be zero */
+        /* server's certificate request context should always be of zero lenght */
         /* https://tools.ietf.org/html/rfc8446#section-4.4.2*/
-        GUARD(s2n_stuffer_write_uint8(&conn->handshake.io, 0));
+        uint8_t certificate_request_context_len = 0;
+        GUARD(s2n_stuffer_write_uint8(&conn->handshake.io, certificate_request_context_len));
     }
     GUARD(s2n_send_cert_chain(&conn->handshake.io, conn->handshake_params.our_chain_and_key->cert_chain));
     return 0;
